@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Project Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+  <div class=" bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg container">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Project Management</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="nav justify-content-end collapse navbar-collapse" id="navbarSupportedContent">
+          <div>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link " aria-current="page" href="index.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="#">Project List</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="add_project.html">Add Project</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <main class="container">
+    <h1>Projects List</h1>
+
+    <p id="loadingMessage" class="text-success"></p>
+    <div class="my-3">
+      <label for="selectStatus">Filter By Project Status</label>
+      <select id="selectStatus" class="form-select">
+        <option value="All">All</option>
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+        <option value="Not Started">Not Started</option>
+      </select>
+    </div>
+
+    <ul class="list-group" id="projectList"></ul>
+
+    <p id="successMessage"></p>
+
+
+
+
+
+  </main>
+
+  <script>
+    const API_URL = "https://project-management-backend-student-neog-ca.replit.app/project"
+    let projectList = document.querySelector('#projectList')
+    const successMessage = document.querySelector('#successMessage')
+    const selectStatus = document.querySelector('#selectStatus')
+    const loadingMessage = document.querySelector('#loadingMessage')
+    let projectData = []
+
+    function fetchData() {
+
+      fetch(API_URL)
+        .then(function (response) {
+          return response.json()
+        })
+        .then(function (data) {
+          listProjects(data)
+          projectData.push(data)
+          console.log(data)
+          deletion()
+        })
+    }
+
+    function listProjects(data) {
+      loadingMessage.textContent = "Loading...."
+      setTimeout(() => {
+        loadingMessage.textContent = " "
+      }, 1000)
+      projectList.innerHTML = " "
+      for (let i = 0; i < data.length; i++) {
+        let listElement = document.createElement('listElement')
+        listElement.className = 'list-group-item'
+
+        listElement.innerHTML = `
+        <p><strong>${data[i].projectName}</strong></p>
+        <p><strong>Project Status:</strong>${data[i].projectStatus}</p>
+        <p><strong>Start Date:</strong>${data[i].projectStartDate}</p>
+        <p><strong>End Date:</strong>${data[i].projectEndDate}</p>
+        <p><strong>Budget:</strong>${data[i].projectBudget}</p>
+        <button id="deleteBtn" data-id='${data[i]._id}' class="btn btn-danger float-end">DELETE</button>
+      `
+        projectList.appendChild(listElement)
+      }
+    }
+
+    selectStatus.addEventListener('change', applyFilter)
+
+    function applyFilter() {
+      let selectedStatus = selectStatus.value;
+      let filteredList = []
+
+      if (selectedStatus !== "All") {
+        for (let i = 0; i < projectData[0].length; i++) {
+          if (projectData[0][i].projectStatus === selectedStatus) {
+            filteredList.push(projectData[0][i])
+          }
+        }
+        listProjects(filteredList)
+      } else {
+        listProjects(projectData[0])
+      }
+    }
+
+    function deletion() {
+      const deleteBtn = document.querySelectorAll('#deleteBtn')
+      console.log(deleteBtn)
+      for (let i = 0; i < deleteBtn.length; i++) {
+        deleteBtn[i].addEventListener('click', function (e) {
+          let deleteBtnId = e.target.getAttribute('data-id')
+          fetch(`${API_URL}/${deleteBtnId}`, {
+            method: "DELETE"
+          })
+            .then(function (response) {
+              return response.json()
+            })
+            .then(function (data) {
+              successMessage.textContent = "deleted suceesfully"
+              console.log(data)
+            })
+        })
+      }
+    }
+
+
+    fetchData()
+
+  </script>
+
+
+</body>
+
+</html>

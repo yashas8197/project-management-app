@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Project Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+  <div class=" bg-body-tertiary">
+    <nav class="navbar navbar-expand-lg container">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Project Management</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="nav justify-content-end collapse navbar-collapse" id="navbarSupportedContent">
+          <div>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link " aria-current="page" href="index.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link " href="project_list.html">Project List</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" href="#">Add Project</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </div>
+
+  <main class="container">
+    <h1>Add Projects</h1>
+
+    <form id="projectDetails">
+      <label for="projectName">Project Name</label><br>
+      <input id="projectName" class="form-control" type="text" />
+      <br><br>
+
+      <label for="projectManagerName">Project Manager Name:</label><br>
+      <input id="projectManagerName" class="form-control" type="text" />
+      <br><br>
+
+      <label for="managerContact">Manager Contact:</label><br>
+      <input id="managerContact" class="form-control" type="number" />
+      <br><br>
+
+      <label for="projectStartDate">Project Start Date:</label><br>
+      <input id="projectStartDate" class="form-control" type="date" />
+      <br><br>
+
+      <label for="projectEndDate">Project End Date:</label><br>
+      <input id="projectEndDate" class="form-control" type="date" />
+      <br><br>
+
+      <label for="projectDescription">Project Description:</label><br>
+      <textarea id="projectDescription" class="form-control" rows="6"></textarea>
+      <br><br>
+
+      <label for="clientName">Client Name:</label><br>
+      <input id="clientName" class="form-control" type="text" />
+      <br><br>
+
+      <label for="clientContactNumber">Client Contact Number:</label><br>
+      <input id="clientContactNumber" class="form-control" type="number" />
+      <br><br>
+
+      <label for="projectBudget">Project Budget:</label><br>
+      <input id="projectBudget" class="form-control" type="number" />
+      <br><br>
+
+      <select id="projectStatus" class="form-select">
+        <option value="In Progress">In Progress</option>
+        <option value="Completed">Completed</option>
+        <option value="Not Started">Not Started</option>
+      </select>
+      <br>
+
+      <button class="btn btn-primary" type="submit">Submit</button>
+      <br>
+
+
+
+    </form>
+
+    <div id="successMessage"></div>
+  </main>
+
+
+
+
+  <script>
+    const projectDetails = document.querySelector('#projectDetails');
+    const projectName = document.querySelector('#projectName');
+    const projectManagerName = document.querySelector('#projectManagerName');
+    const managerContact = document.querySelector('#managerContact');
+    const projectStartDate = document.querySelector('#projectStartDate');
+    const projectEndDate = document.querySelector('#projectEndDate');
+    const projectDescription = document.querySelector('#projectDescription');
+    const clientName = document.querySelector('#clientName');
+    const clientContactNumber = document.querySelector('#clientContactNumber');
+    const projectBudget = document.querySelector('#projectBudget');
+    const projectStatus = document.querySelector('#projectStatus');
+    const successMessage = document.querySelector('#successMessage')
+    const API_URL = 'https://project-management-backend-student-neog-ca.replit.app/project'
+
+    projectDetails.addEventListener('submit', function (e) {
+      e.preventDefault()
+
+      const responseData = {
+        projectName: projectName.value,
+        projectManagerName: projectManagerName.value,
+        managerContact: managerContact.value,
+        projectStartDate: projectStartDate.value,
+        projectEndDate: projectEndDate.value,
+        projectDescription: projectDescription.value,
+        clientName: clientName.value,
+        clientContactNumber: clientContactNumber.value,
+        projectBudget: projectBudget.value,
+        projectStatus: projectStatus.value
+      }
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(responseData),
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+        .then(function (response) {
+          return response.json()
+        })
+        .then(function (data) {
+          if (data) {
+            successMessage.textContent = "Data Added Successfully"
+          }
+        })
+    })
+
+  </script>
+
+
+
+</body>
+
+</html>
